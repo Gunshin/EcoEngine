@@ -81,12 +81,31 @@ class Commodity
 		return value;
 	}
 	
-	static var conversionConditionArray:Array < Inventory->Bool > = new Array < Inventory->Bool > ();
+	static var commodityConversions:Map < String, Array<CommodityConversion> > = new Map < String, Array<CommodityConversion> > ();
+	
+	/*static var conversionConditionArray:Array < Inventory->Bool > = new Array < Inventory->Bool > ();
 	static var conversionActionArray:Array < Inventory->Void > = new Array < Inventory->Void > ();
 	public static function AddConversion(condition_:Inventory->Bool, action_:Inventory->Void)
 	{
 		conversionConditionArray[conversionConditionArray.length] = condition_;
 		conversionActionArray[conversionActionArray.length] = action_;
+	}*/
+	
+}
+
+class CommodityConversion
+{
+	var requirements:Array<Commodity> = new Array<Commodity>();
+	var produce:Array<Commodity> = new Array<Commodity>();
+	
+	public function new()
+	{
+		
+	}
+	
+	public function AddRequirement(commodity_:Commodity)
+	{
+		requirements.
 	}
 	
 }
