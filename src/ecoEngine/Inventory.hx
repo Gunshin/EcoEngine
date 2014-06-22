@@ -62,4 +62,14 @@ class Inventory
 	{
 		return currentItemCount;
 	}
+	
+	public function Print():Void
+	{
+		trace("______ Starting inventory print _____________");
+		for (i in stock)
+		{
+			if(i != null)
+			trace("Agent " + i.get_agentID() + " stock type = " + i.get_id() + " with count = " + i.get_count());
+		}
+	}
 }

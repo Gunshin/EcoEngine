@@ -13,7 +13,7 @@ class Agent
 	
 	var monetary_value(get, null):Int;
 	
-	var inventory:Inventory = new Inventory(32);
+	var inventory(get, null):Inventory = new Inventory(32);
 
 	public function new(?professionString_:String, ?professionID_:Int) 
 	{
@@ -49,6 +49,11 @@ class Agent
 		return monetary_value;
 	}
 	
+	public function get_inventory():Inventory
+	{
+		return inventory;
+	}
+	
 	public function AddItem(commodity_:Commodity):Void
 	{
 		inventory.AddStock(commodity_);
@@ -66,7 +71,11 @@ class Agent
 			var conv:CommodityConversion = CommodityConversion.GetCommodityConversion(profession);
 			
 			conv.ConvertItems(inventory);
+			
+			inventory.Print();
 		}
+		
+		ticksUntilNextResource--;
 	}
 	
 	static var CURRENT_ID:Int = 0;
