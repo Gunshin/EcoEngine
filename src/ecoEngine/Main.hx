@@ -32,76 +32,76 @@ class Main
 			new CommodityConversion("Food")
 			.AddRequirement(null, function(inv_:Inventory):Bool
 			{
-				return inv_.ContainsAmount(new Commodity("Tool", null, 1, null));
+				return inv_.ContainsAmount(new Commodity("Tool", null, 1));
 			})
 			.AddConversionFunction(function(comConv_:CommodityConversion, inv_:Inventory):Void
 			{
 				var broke:Int = Std.random(20);
 				if (broke == 0)
 				{
-					inv_.RemoveStock(new Commodity("Tool", null, 1, null));
+					inv_.RemoveStock(new Commodity("Tool", null, 1));
 				}
 			})
-			.AddProduce(new Commodity("Food", null, 10, null))
+			.AddProduce(new Commodity("Food", null, 10))
 		);
 		
-		CommodityConversion.AddConversion("All", new CommodityConversion("Eat").AddRequirement(new Commodity("Food", null, 1, null)));
+		CommodityConversion.AddConversion("All", new CommodityConversion("Eat").AddRequirement(new Commodity("Food", null, 1)));
 		
 		CommodityConversion.AddConversion("Woodcutter", 
 			new CommodityConversion("Wood")
 			.AddRequirement(null, function(inv_:Inventory):Bool
 			{
-				return inv_.ContainsAmount(new Commodity("Tool", null, 1, null));
+				return inv_.ContainsAmount(new Commodity("Tool", null, 1));
 			})
 			.AddConversionFunction(function(comConv_:CommodityConversion, inv_:Inventory):Void
 			{
 				var broke:Int = Std.random(20);
 				if (broke == 0)
 				{
-					inv_.RemoveStock(new Commodity("Tool", null, 1, null));
+					inv_.RemoveStock(new Commodity("Tool", null, 1));
 				}
 			})
-			.AddProduce(new Commodity("Wood", null, 5, null))
+			.AddProduce(new Commodity("Wood", null, 5))
 		);
 		
 		CommodityConversion.AddConversion("Miner", 
 			new CommodityConversion("Iron")
 			.AddRequirement(null, function(inv_:Inventory):Bool
 			{
-				return inv_.ContainsAmount(new Commodity("Tool", null, 1, null));
+				return inv_.ContainsAmount(new Commodity("Tool", null, 1));
 			})
 			.AddConversionFunction(function(comConv_:CommodityConversion, inv_:Inventory):Void
 			{
 				var broke:Int = Std.random(20);
 				if (broke == 0)
 				{
-					inv_.RemoveStock(new Commodity("Tool", null, 1, null));
+					inv_.RemoveStock(new Commodity("Tool", null, 1));
 				}
 			})
-			.AddProduce(new Commodity("Iron", null, 3, null))
+			.AddProduce(new Commodity("Iron", null, 3))
 		);
 		
 		CommodityConversion.AddConversion("Blacksmith", new CommodityConversion("Tools")
-			.AddRequirement(new Commodity("Iron", null, 2, null))
+			.AddRequirement(new Commodity("Iron", null, 2))
 			.AddRequirement(null, function(inv_:Inventory):Bool
 			{
-				return inv_.ContainsAmount(new Commodity("Tool", null, 1, null));
+				return inv_.ContainsAmount(new Commodity("Tool", null, 1));
 			})
 			.AddConversionFunction(function(comConv_:CommodityConversion, inv_:Inventory):Void
 			{
 				var broke:Int = Std.random(20);
 				if (broke == 0)
 				{
-					inv_.RemoveStock(new Commodity("Tool", null, 1, null));
+					inv_.RemoveStock(new Commodity("Tool", null, 1));
 				}
 			})
-			.AddProduce(new Commodity("Tool", null, 1, null))
+			.AddProduce(new Commodity("Tool", null, 1))
 		);
 		
 		for (i in 0...20)
 		{
 			agents[i] = new Agent(null, Std.random(4));
-			agents[i].AddItem(new Commodity("Tool", null, 5, agents[i].get_id()));
+			agents[i].AddItem(new Commodity("Tool", null, 5));
 		}
 		
 		//TickResources();

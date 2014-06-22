@@ -69,7 +69,7 @@ class Inventory
 		for (i in stock)
 		{
 			if(i != null)
-			trace("Agent " + i.get_agentID() + " stock type = " + i.get_id() + " with count = " + i.get_count());
+			trace(" stock type = " + i.get_id() + " with count = " + i.get_count());
 		}
 	}
 }

@@ -9,9 +9,8 @@ class Commodity
 
 	var id(get, null):Int;
 	var count(get, null):Int;
-	var agentID(get, null):Int;
 	
-	public function new(?commodityString_:String, ?commodityID_:Int, ?count_:Int, ?agentID_:Int) 
+	public function new(?commodityString_:String, ?commodityID_:Int, ?count_:Int) 
 	{
 		if (commodityString_ != null)
 		{
@@ -28,11 +27,6 @@ class Commodity
 			count = count_;
 		}
 		
-		if (agentID_ != null)
-		{
-			agentID = agentID_;
-		}
-		
 	}
 	
 	public function get_id():Int
@@ -44,12 +38,7 @@ class Commodity
 	{
 		return count;
 	}
-	
-	public function get_agentID():Int
-	{
-		return agentID;
-	}
-	
+
 	public function Add(count_:Int):Void
 	{
 		count += count_;
