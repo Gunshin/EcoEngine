@@ -16,9 +16,9 @@ class Inventory
 		maxItems = maxItems_;
 	}
 	
-	public function AddStock(?commodity_:Commodity, ?itemID_:Int, ?itemCount_:Int):Void
+	public function AddStock(commodity_:Commodity):Void
 	{
-		if (commodity_ != null && commodity_.get_count() > 0)
+		if (commodity_.get_count() > 0)
 		{
 			if (stock[commodity_.get_id()] == null)
 			{
@@ -30,21 +30,22 @@ class Inventory
 				commodity_.Remove(commodity_.get_count());
 			}
 		}
-		else if (itemID_ != null && itemCount_ != null && itemID_ >= 0 && itemCount_ > 0)
-		{
-			stock[itemID_].Add(itemCount_);
-		}
 		
 	}
 	
-	public function RemoveStock(itemID_:Int, count_:Int):Void
+	public function RemoveStock(commodity_:Commodity):Void
 	{
-		stock[itemID_].Remove(count_);
+		stock[commodity_.get_id()].Remove(commodity_.get_count());
 	}
 	
 	public function Contains(itemID:Int):Bool
 	{
 		return stock[itemID] != null && stock[itemID].get_count() > 0;
+	}
+	
+	public function ContainsAmount(commodity_:Commodity):Bool
+	{
+		return stock[commodity_.get_id()] != null && stock[commodity_.get_id()].get_count() >= commodity_.get_count();
 	}
 	
 	public function get_maxItems():Int

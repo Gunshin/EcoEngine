@@ -11,7 +11,7 @@ class Commodity
 	var count(get, null):Int;
 	var agentID(get, null):Int;
 	
-	public function new(?commodityString_:String, ?commodityID_:Int, ?count_:Int, agentID_:Int) 
+	public function new(?commodityString_:String, ?commodityID_:Int, ?count_:Int, ?agentID_:Int) 
 	{
 		if (commodityString_ != null)
 		{
@@ -28,7 +28,11 @@ class Commodity
 			count = count_;
 		}
 		
-		agentID = agentID_;
+		if (agentID_ != null)
+		{
+			agentID = agentID_;
+		}
+		
 	}
 	
 	public function get_id():Int
@@ -79,33 +83,6 @@ class Commodity
 			value = AddCommodity(name);
 		}
 		return value;
-	}
-	
-	static var commodityConversions:Map < String, Array<CommodityConversion> > = new Map < String, Array<CommodityConversion> > ();
-	
-	/*static var conversionConditionArray:Array < Inventory->Bool > = new Array < Inventory->Bool > ();
-	static var conversionActionArray:Array < Inventory->Void > = new Array < Inventory->Void > ();
-	public static function AddConversion(condition_:Inventory->Bool, action_:Inventory->Void)
-	{
-		conversionConditionArray[conversionConditionArray.length] = condition_;
-		conversionActionArray[conversionActionArray.length] = action_;
-	}*/
-	
-}
-
-class CommodityConversion
-{
-	var requirements:Array<Commodity> = new Array<Commodity>();
-	var produce:Array<Commodity> = new Array<Commodity>();
-	
-	public function new()
-	{
-		
-	}
-	
-	public function AddRequirement(commodity_:Commodity)
-	{
-		requirements.
 	}
 	
 }
