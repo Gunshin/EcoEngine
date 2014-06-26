@@ -1,0 +1,12 @@
+{
+   "agentClass":[
+      {
+         "name":"Woodcutter",
+         "inventory":[
+            {"name":"Food", "count":5}
+         ],
+         "money":10,
+         "script":"Woodcutter.hs"
+      }
+   ]
+}
