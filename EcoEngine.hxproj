@@ -16,6 +16,7 @@
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="src" />
+    <class path="..\..\..\..\..\..\HaxeToolkit\haxe\lib\hscript\2,0,1" />
   </classpaths>
   <!-- Build options -->
   <build>

@@ -9,7 +9,7 @@ class Inventory
 
 	@:isVar var maxItems(get, set):Int;
 	var currentItemCount(get, null):Int;
-	var stock:Array<Commodity> = new Array<Commodity>();
+	var stock:Map<String, Commodity> = new Map<String, Commodity>();
 	
 	public function new(maxItems_:Int) 
 	{
@@ -20,13 +20,14 @@ class Inventory
 	{
 		if (commodity_.get_count() > 0)
 		{
-			if (stock[commodity_.get_id()] == null)
+			var commo:Commodity = stock.get(commodity_.get_type().get_name())
+			if (commo == null)
 			{
-				stock[commodity_.get_id()] = commodity_;
+				stock.set(commodity_.get_type().get_name(), commodity_);
 			}
 			else
 			{
-				stock[commodity_.get_id()].Add(commodity_.get_count());
+				commodity_.Add(commodity_.get_count());
 				commodity_.Remove(commodity_.get_count());
 			}
 		}
@@ -35,7 +36,12 @@ class Inventory
 	
 	public function RemoveStock(commodity_:Commodity):Void
 	{
-		stock[commodity_.get_id()].Remove(commodity_.get_count());
+		var commo:Commodity = stock.get(commodity_.get_type().get_name())
+		if (commo != null)
+		{
+			commo.Remove(commodity_.get_count());
+		}
+		
 	}
 	
 	public function Contains(itemID:Int):Bool

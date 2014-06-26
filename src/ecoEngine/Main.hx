@@ -1,10 +1,16 @@
 package ecoEngine;
 
 import cpp.Lib;
+import cpp.vm.Debugger.ThreadInfo;
 import cpp.vm.Thread;
 import cpp.vm.Mutex;
 import haxe.Constraints.Function;
+import haxe.Log;
 import haxe.Timer;
+import sys.FileSystem;
+import sys.io.File;
+
+import haxe.Json;
 
 /**
  * ...
@@ -18,7 +24,7 @@ class Main
 	
 	public function new()
 	{
-		Agent.AddProfession("Farmer");
+		/*Agent.AddProfession("Farmer");
 		Agent.AddProfession("Woodcutter");
 		Agent.AddProfession("Miner");
 		Agent.AddProfession("Blacksmith");
@@ -26,9 +32,20 @@ class Main
 		Commodity.AddCommodity("Wood");
 		Commodity.AddCommodity("Food");
 		Commodity.AddCommodity("Iron");
-		Commodity.AddCommodity("Tool");
+		Commodity.AddCommodity("Tool");*/
 		
-		CommodityConversion.AddConversion("Farmer", 
+		//trace(FileSystem.exists("Resources/settings.json"));
+		
+		var data:Dynamic = LoadJSON("Resources/settings.json");
+		
+		var agentClass:Map<String, AgentClass> = new Map<String, AgentClass>();
+		var jsonAgents:Array<Dynamic> = data.agentClass;
+		for (agent in jsonAgents)
+		{
+			var ac:AgentClass = new AgentClass(agent);
+		}
+		
+		/*CommodityConversion.AddConversion("Farmer", 
 			new CommodityConversion("Food")
 			.AddRequirement(null, function(inv_:Inventory):Bool
 			{
@@ -96,7 +113,7 @@ class Main
 				}
 			})
 			.AddProduce(new Commodity("Tool", null, 1))
-		);
+		);*/
 		
 		for (i in 0...20)
 		{
@@ -106,12 +123,12 @@ class Main
 		
 		//TickResources();
 		
-		var flag:Bool = true;
+		/*var flag:Bool = true;
 		
 		while (flag)
 		{
 			TickResources();
-		}
+		}*/
 		
 	}
 	
@@ -123,6 +140,14 @@ class Main
 			i.Update();
 		}
 		
+	}
+	
+	public function LoadJSON(filepath_:String):Dynamic
+	{
+		var content:String = File.getContent(filepath_);
+		trace(content);
+		
+		return Json.parse(content);
 	}
 
 	static function main() 
