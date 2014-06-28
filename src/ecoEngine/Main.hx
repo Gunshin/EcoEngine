@@ -24,104 +24,31 @@ class Main
 	
 	public function new()
 	{
-		/*Agent.AddProfession("Farmer");
-		Agent.AddProfession("Woodcutter");
-		Agent.AddProfession("Miner");
-		Agent.AddProfession("Blacksmith");
-		
-		Commodity.AddCommodity("Wood");
-		Commodity.AddCommodity("Food");
-		Commodity.AddCommodity("Iron");
-		Commodity.AddCommodity("Tool");*/
 		
 		//trace(FileSystem.exists("Resources/settings.json"));
 		
 		var data:Dynamic = LoadJSON("Resources/settings.json");
 		
-		var agentClass:Map<String, AgentClass> = new Map<String, AgentClass>();
+		var resources:Array<Dynamic> = data.resources;
+		for (res in resources)
+		{
+			new CommodityType(res);
+		}
+		
+		var agentTypes:Array<String> = new Array<String>();
 		var jsonAgents:Array<Dynamic> = data.agentClass;
 		for (agent in jsonAgents)
 		{
 			var ac:AgentClass = new AgentClass(agent);
+			agentTypes.push(ac.get_name());
 		}
-		
-		/*CommodityConversion.AddConversion("Farmer", 
-			new CommodityConversion("Food")
-			.AddRequirement(null, function(inv_:Inventory):Bool
-			{
-				return inv_.ContainsAmount(new Commodity("Tool", null, 1));
-			})
-			.AddConversionFunction(function(comConv_:CommodityConversion, inv_:Inventory):Void
-			{
-				var broke:Int = Std.random(20);
-				if (broke == 0)
-				{
-					inv_.RemoveStock(new Commodity("Tool", null, 1));
-				}
-			})
-			.AddProduce(new Commodity("Food", null, 10))
-		);
-		
-		CommodityConversion.AddConversion("All", new CommodityConversion("Eat").AddRequirement(new Commodity("Food", null, 1)));
-		
-		CommodityConversion.AddConversion("Woodcutter", 
-			new CommodityConversion("Wood")
-			.AddRequirement(null, function(inv_:Inventory):Bool
-			{
-				return inv_.ContainsAmount(new Commodity("Tool", null, 1));
-			})
-			.AddConversionFunction(function(comConv_:CommodityConversion, inv_:Inventory):Void
-			{
-				var broke:Int = Std.random(20);
-				if (broke == 0)
-				{
-					inv_.RemoveStock(new Commodity("Tool", null, 1));
-				}
-			})
-			.AddProduce(new Commodity("Wood", null, 5))
-		);
-		
-		CommodityConversion.AddConversion("Miner", 
-			new CommodityConversion("Iron")
-			.AddRequirement(null, function(inv_:Inventory):Bool
-			{
-				return inv_.ContainsAmount(new Commodity("Tool", null, 1));
-			})
-			.AddConversionFunction(function(comConv_:CommodityConversion, inv_:Inventory):Void
-			{
-				var broke:Int = Std.random(20);
-				if (broke == 0)
-				{
-					inv_.RemoveStock(new Commodity("Tool", null, 1));
-				}
-			})
-			.AddProduce(new Commodity("Iron", null, 3))
-		);
-		
-		CommodityConversion.AddConversion("Blacksmith", new CommodityConversion("Tools")
-			.AddRequirement(new Commodity("Iron", null, 2))
-			.AddRequirement(null, function(inv_:Inventory):Bool
-			{
-				return inv_.ContainsAmount(new Commodity("Tool", null, 1));
-			})
-			.AddConversionFunction(function(comConv_:CommodityConversion, inv_:Inventory):Void
-			{
-				var broke:Int = Std.random(20);
-				if (broke == 0)
-				{
-					inv_.RemoveStock(new Commodity("Tool", null, 1));
-				}
-			})
-			.AddProduce(new Commodity("Tool", null, 1))
-		);*/
 		
 		for (i in 0...20)
 		{
-			agents[i] = new Agent(null, Std.random(4));
-			agents[i].AddItem(new Commodity("Tool", null, 5));
+			agents[i] = AgentClass.CreateNewAgent(agentTypes[Std.random(agentTypes.length)]);
 		}
 		
-		//TickResources();
+		TickResources();
 		
 		/*var flag:Bool = true;
 		
@@ -145,7 +72,7 @@ class Main
 	public function LoadJSON(filepath_:String):Dynamic
 	{
 		var content:String = File.getContent(filepath_);
-		trace(content);
+		//trace(content);
 		
 		return Json.parse(content);
 	}

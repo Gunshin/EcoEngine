@@ -9,18 +9,21 @@ class Agent
 {
 	
 	var id(get, null):Int;
-	var profession(get, null):Int;
+	var profession(get, null):AgentClass;
 	
 	var monetary_value(get, null):Int;
 	
 	var inventory(get, null):Inventory = new Inventory(32);
 
-	public function new(?professionString_:String, ?professionID_:Int) 
+	public function new(profession_:AgentClass) 
 	{
 		
-		SetID();
+		profession = profession_;
 		
-		if (professionString_ != null)
+		
+		//SetID();
+		
+		/*if (professionString_ != null)
 		{
 			profession = GetProfessionID(professionString_);
 		}
@@ -30,7 +33,7 @@ class Agent
 			profession = professionID_;
 		}
 		
-		monetary_value = Std.random(101);
+		monetary_value = Std.random(101);*/
 		
 	}
 	
@@ -39,7 +42,7 @@ class Agent
 		return id;
 	}
 	
-	public function get_profession():Int
+	public function get_profession():AgentClass
 	{
 		return profession;
 	}
@@ -59,6 +62,24 @@ class Agent
 		inventory.AddStock(commodity_);
 	}
 	
+	public function Consume(name_:String, count_:Int, chance_:Float = 1):Void
+	{
+		if (chance_ >= Math.random())
+		{
+			inventory.RemoveStock(CommodityType.CreateNewCommodity(name_, count_));
+		}
+	}
+	
+	public function Produce(name_:String, count_:Int):Void
+	{
+		inventory.AddStock(CommodityType.CreateNewCommodity(name_, count_));
+	}
+	
+	public function ContainsAmount(name_:String, count_:Int):Bool
+	{
+		return inventory.ContainsAmount(CommodityType.CreateNewCommodity(name_, count_));
+	}
+	
 	var ticksUntilNextResource:Int = 0;
 	
 	public function Update()
@@ -68,10 +89,10 @@ class Agent
 		{
 			ticksUntilNextResource = 100 + Std.random(100);
 			
-			var conv:CommodityConversion = CommodityConversion.GetCommodityConversion(profession);
+			profession.SetVariables(this);
+			profession.RunScript();
 			
-			conv.ConvertItems(inventory);
-			
+			trace(profession.get_name());
 			inventory.Print();
 		}
 		
@@ -85,7 +106,7 @@ class Agent
 		CURRENT_ID++;
 	}
 	
-	static var CURRENT_PROFESSION_ID:Int = 0;
+	/*static var CURRENT_PROFESSION_ID:Int = 0;
 	static var professions:Map<String, Int> = new Map<String, Int>();
 	public static function AddProfession(name:String):Int
 	{
@@ -103,5 +124,5 @@ class Agent
 			value = AddProfession(name);
 		}
 		return value;
-	}
+	}*/
 }

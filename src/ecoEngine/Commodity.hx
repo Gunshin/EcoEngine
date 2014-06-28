@@ -35,7 +35,7 @@ class Commodity
 	
 	public function Remove(count_:Int):Void
 	{
-		count = Math.max(0, count - count_);
+		count = cast(Math.max(0, count - count_), Int);
 	}
 	
 	

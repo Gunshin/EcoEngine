@@ -1,12 +1,47 @@
 {
+   "resources":[
+      {"name":"Wood"},
+      {"name":"Food"},
+      {"name":"Iron"},
+      {"name":"Tool"}
+   ],
    "agentClass":[
       {
          "name":"Woodcutter",
          "inventory":[
-            {"name":"Food", "count":5}
+            {"name":"Food", "count":5},
+            {"name":"Tool", "count":5}
          ],
          "money":10,
-         "script":"Woodcutter.hs"
+         "script":"Resources/ProfessionScripts/Woodcutter.hs"
+      },
+	  {
+         "name":"Farmer",
+         "inventory":[
+            {"name":"Food", "count":10},
+            {"name":"Tool", "count":5}
+         ],
+         "money":10,
+         "script":"Resources/ProfessionScripts/Farmer.hs"
+      },
+	  {
+         "name":"Miner",
+         "inventory":[
+            {"name":"Food", "count":5},
+            {"name":"Tool", "count":5}
+         ],
+         "money":10,
+         "script":"Resources/ProfessionScripts/Miner.hs"
+      },
+	  {
+         "name":"Blacksmith",
+         "inventory":[
+            {"name":"Food", "count":5},
+            {"name":"Iron", "count":5},
+            {"name":"Tool", "count":5}
+         ],
+         "money":10,
+         "script":"Resources/ProfessionScripts/Blacksmith.hs"
       }
    ]
 }

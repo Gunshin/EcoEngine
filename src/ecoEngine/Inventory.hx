@@ -20,14 +20,14 @@ class Inventory
 	{
 		if (commodity_.get_count() > 0)
 		{
-			var commo:Commodity = stock.get(commodity_.get_type().get_name())
+			var commo:Commodity = stock.get(commodity_.get_type().get_name());
 			if (commo == null)
 			{
 				stock.set(commodity_.get_type().get_name(), commodity_);
 			}
 			else
 			{
-				commodity_.Add(commodity_.get_count());
+				commo.Add(commodity_.get_count());
 				commodity_.Remove(commodity_.get_count());
 			}
 		}
@@ -36,7 +36,7 @@ class Inventory
 	
 	public function RemoveStock(commodity_:Commodity):Void
 	{
-		var commo:Commodity = stock.get(commodity_.get_type().get_name())
+		var commo:Commodity = stock.get(commodity_.get_type().get_name());
 		if (commo != null)
 		{
 			commo.Remove(commodity_.get_count());
@@ -44,14 +44,28 @@ class Inventory
 		
 	}
 	
-	public function Contains(itemID:Int):Bool
+	public function Contains(name_:String):Bool
 	{
-		return stock[itemID] != null && stock[itemID].get_count() > 0;
+		var commo:Commodity = stock.get(name_);
+		
+		if (commo == null)
+		{
+			return false;
+		}
+		
+		return commo.get_count() > 0;
 	}
 	
 	public function ContainsAmount(commodity_:Commodity):Bool
 	{
-		return stock[commodity_.get_id()] != null && stock[commodity_.get_id()].get_count() >= commodity_.get_count();
+		var commo:Commodity = stock.get(commodity_.get_type().get_name());
+		
+		if (commo == null)
+		{
+			return false;
+		}
+		
+		return commo.get_count() >= commodity_.get_count() ;
 	}
 	
 	public function get_maxItems():Int
@@ -75,7 +89,7 @@ class Inventory
 		for (i in stock)
 		{
 			if(i != null)
-			trace(" stock type = " + i.get_id() + " with count = " + i.get_count());
+			trace(" stock type = " + i.get_type().get_name() + " with count = " + i.get_count());
 		}
 	}
 }
