@@ -48,6 +48,8 @@ class Main
 			agents[i] = AgentClass.CreateNewAgent(agentTypes[Std.random(agentTypes.length)]);
 		}
 		
+		var broker:Brokerage = new Brokerage();
+		
 		TickResources();
 		
 		/*var flag:Bool = true;
@@ -56,6 +58,11 @@ class Main
 		{
 			TickResources();
 		}*/
+		
+	}
+	
+	public function RunUpdateLoop()
+	{
 		
 	}
 	

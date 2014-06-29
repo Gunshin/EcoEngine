@@ -1,4 +1,5 @@
 package ecoEngine;
+import haxe.Timer;
 
 /**
  * ...
@@ -11,7 +12,7 @@ class Agent
 	var id(get, null):Int;
 	var profession(get, null):AgentClass;
 	
-	var monetary_value(get, null):Int;
+	var money_amount(get, null):Int;
 	
 	var inventory(get, null):Inventory = new Inventory(32);
 
@@ -47,9 +48,19 @@ class Agent
 		return profession;
 	}
 	
-	public function get_monetary_value():Int
+	public function get_money_amount():Int
 	{
-		return monetary_value;
+		return money_amount;
+	}
+	
+	public function AddMoney(count_:Int):Void
+	{
+		money_amount += count_;
+	}
+	
+	public function RemoveMoney(count_:Int):Void
+	{
+		money_amount = Math.max(0, money_amount - count_);
 	}
 	
 	public function get_inventory():Inventory
@@ -80,23 +91,14 @@ class Agent
 		return inventory.ContainsAmount(CommodityType.CreateNewCommodity(name_, count_));
 	}
 	
-	var ticksUntilNextResource:Int = 0;
-	
 	public function Update()
 	{
+		profession.SetVariables(this);
+		profession.RunScript();
 		
-		if (ticksUntilNextResource == 0)
-		{
-			ticksUntilNextResource = 100 + Std.random(100);
-			
-			profession.SetVariables(this);
-			profession.RunScript();
-			
-			trace(profession.get_name());
-			inventory.Print();
-		}
-		
-		ticksUntilNextResource--;
+		trace(profession.get_name());
+		inventory.Print();
+
 	}
 	
 	static var CURRENT_ID:Int = 0;
