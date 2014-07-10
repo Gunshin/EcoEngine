@@ -1,5 +1,4 @@
 package ecoEngine;
-import haxe.Timer;
 
 /**
  * ...
@@ -74,13 +73,13 @@ class Agent
 		return inventory.ContainsAmount(CommodityType.CreateNewCommodity(name_, count_));
 	}
 	
-	public function Update()
+	public function Update(deltaTime:Float)
 	{
 		profession.SetVariables(this);
-		profession.RunScript();
+		profession.RunAllScripts();
 		
-		trace(profession.get_name());
-		inventory.Print();
+		//trace(profession.get_name());
+		//inventory.Print();
 
 	}
 	
@@ -91,23 +90,4 @@ class Agent
 		CURRENT_ID++;
 	}
 	
-	/*static var CURRENT_PROFESSION_ID:Int = 0;
-	static var professions:Map<String, Int> = new Map<String, Int>();
-	public static function AddProfession(name:String):Int
-	{
-		professions.set(name, CURRENT_PROFESSION_ID);
-		trace("Added profession: " + name + " to ID: " + CURRENT_PROFESSION_ID);
-		CURRENT_PROFESSION_ID++;
-		return CURRENT_PROFESSION_ID - 1;
-	}
-	
-	public static function GetProfessionID(name:String):Int
-	{
-		var value = professions.get(name);
-		if (value == null)
-		{
-			value = AddProfession(name);
-		}
-		return value;
-	}*/
 }

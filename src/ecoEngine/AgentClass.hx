@@ -14,10 +14,10 @@ import sys.io.FileInput;
  */
 class AgentClass 
 {
-	var script:String;
-	var compiledScript:Expr;
+	var compiledScripts:Array<Expr> = new Array<Expr>();
 	var interp:Interp = new Interp();
-	var scriptVars:Map<String, Dynamic>;
+	//var scriptVars:Array<Map<String, Dynamic>> = new Array<Map<String, Dynamic>>();
+	var scriptVars:Map<String, Dynamic> = new Map<String, Dynamic>();
 	
 	var name(get, null):String;
 	public function get_name():String
@@ -30,7 +30,12 @@ class AgentClass
 	public function new(data_:Dynamic) 
 	{
 		var parser = new Parser();
-		compiledScript = parser.parseString(File.getContent(data_.script));
+		
+		var loadedScripts:Array<Dynamic> = data_.scripts;
+		for (a in loadedScripts)
+		{
+			compiledScripts.push(parser.parseString(File.getContent(a)));
+		}
 		
 		name = data_.name;
 		
@@ -76,9 +81,12 @@ class AgentClass
 		interp.variables = scriptVars;
 	}
 	
-	public function RunScript()
+	public function RunAllScripts()
 	{
-		interp.execute(compiledScript);
+		for (script in compiledScripts)
+		{
+			interp.execute(script);
+		}
 	}
 	
 	static var professions:Map<String, AgentClass> = new Map<String, AgentClass>();

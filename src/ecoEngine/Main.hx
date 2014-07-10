@@ -43,22 +43,24 @@ class Main
 			agentTypes.push(ac.get_name());
 		}
 		
-		for (i in 0...20)
+		for (i in 0...200)
 		{
 			agents[i] = AgentClass.CreateNewAgent(agentTypes[Std.random(agentTypes.length)]);
 		}
 		
 		var broker:Brokerage = new Brokerage();
 		
-		TickResources();
-		
-		/*var flag:Bool = true;
-		
+		var flag:Bool = true;
+		var currentTime:Float = 0;
 		while (flag)
 		{
-			TickResources();
-		}*/
-		
+			var deltaTime:Float = Timer.stamp() - currentTime;
+			currentTime += deltaTime;
+			
+			trace(deltaTime);
+			
+			TickResources(deltaTime);
+		}
 	}
 	
 	public function RunUpdateLoop()
@@ -66,12 +68,12 @@ class Main
 		
 	}
 	
-	public function TickResources()
+	public function TickResources(deltaTime:Float)
 	{
 		
 		for (i in agents)
 		{
-			i.Update();
+			i.Update(deltaTime);
 		}
 		
 	}
