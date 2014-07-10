@@ -25,7 +25,6 @@ class AgentClass
 		return name;
 	}
 	
-	var startCash:Int;
 	var startCommodities:Array<Commodity> = new Array<Commodity>();
 	
 	public function new(data_:Dynamic) 
@@ -35,7 +34,6 @@ class AgentClass
 		
 		name = data_.name;
 		
-		startCash = data_.money;
 		var startInventory:Array<Dynamic> = data_.inventory;
 		for (a in startInventory)
 		{

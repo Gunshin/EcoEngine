@@ -1,5 +1,4 @@
 package ecoEngine;
-import ecoEngine.Brokerage.Order;
 
 /**
  * ...
@@ -7,12 +6,9 @@ import ecoEngine.Brokerage.Order;
  */
 class Brokerage 
 {
-
-	/*var buyOrders:Array<Array<Order>> = new Array<Commodity>();
-	var sellOrders:Array<Array<Order>> = new Array<Commodity>();*/
 	
-	var buyOrders:Map < CommodityType, Array<Order> > = new Map < CommodityType, Array<Order> > ();
-	var sellOrders:Map < CommodityType, Array<Order> > = new Map < CommodityType, Array<Order> > ();
+	var buyOrders:Map < CommodityType, Array<BuyOrder> > = new Map < CommodityType, Array<BuyOrder> > ();
+	var sellOrders:Map < CommodityType, Array<SellOrder> > = new Map < CommodityType, Array<SellOrder> > ();
 	
 	var completedOrders:Array<FinishedOrder> = new Array<FinishedOrder>();
 	
@@ -21,162 +17,263 @@ class Brokerage
 	public function new() 
 	{
 		
-		
 	}
 	
-	public function SellCommodity(commodity_:Commodity, owner_:Agent, minimumCostPerItem_:Int):Bool
+	public function SellCommodity(owner_:Agent, commodityToSell_:Commodity, totalMoney_:Commodity):Void
 	{
-		var existingBuyOrders:Array<Order> = CheckBuyOrders(commodity_, minimumCostPerItem_);
+		var amountPerItem:Int = cast(totalMoney_.get_count() / commodityToSell_.get_count(), Int);
 		
-		var amountSold:Int = 0;
+		// check existing buy orders
+		var existingBuyOrders:Array<BuyOrder> = buyOrders[commodityToSell_.get_type()];
 		
+		// sell existing orders to agent
 		for (i in existingBuyOrders)
 		{
-			
-			if(i.
-			
+			// if we can get the amount we are looking to sell for or more do it
+			if (amountPerItem <= i.GetCostPerItem())
+			{
+				// complete the transaction
+				var fOrders:Array<FinishedOrder> = i.Completed(owner_, commodityToSell_);
+				
+				for (i in 0...fOrders.length)
+				{
+					// since the seller is at the brokerage, give him the goods immediately. Add the buyers goods to the competedOrders awaiting collection.
+					if (fOrders[i].get_owner() == owner_)
+					{
+						fOrders[i].TransferGoods();
+					}
+					else
+					{
+						completedOrders.push(fOrders[i]);
+					}
+				}
+			}
+			else
+			{
+				break;
+			}
 		}
 		
+		if (commodityToSell_.get_count() > 0)
+		{
+			AddSellOrder(owner_, commodityToSell_, new Commodity(CommodityType.GetCommodityType("Money"), amountPerItem * commodityToSell_.get_count()));
+		}
 	}
 	
-	function AddSellOrder(commodity_:Commodity, owner_:Agent, costPerItem_:Int)
+	function AddSellOrder(owner_:Agent, commodity_:Commodity, totalMoney_:Commodity)
 	{
-		var array:Array<Order> = sellOrders[commodity_.get_type()];
+		var array:Array<SellOrder> = sellOrders[commodity_.get_type()];
+		
+		var costPerItem:Int = cast(commodity_.get_count() / totalMoney_.get_count(), Int);
 		
 		if (array == null)
 		{
-			array = new Array<Order>();
+			array = new Array<SellOrder>();
 			sellOrders[commodity_.get_type()] = array;
-			array.push(new Order(commodity_, owner_, costPerItem_));
+			array.push(new SellOrder(owner_, commodity_, totalMoney_));
 			return;
 		}
 		else
 		{
 			for (i in 0...array.length - 1)
 			{
-				if (array[i].costPerItem > costPerItem_)
+				if (array[i].GetCostPerItem() > costPerItem)
 				{
-					array.insert(i, new Order(commodity_, owner_, costPerItem_));
+					array.insert(i, new SellOrder(owner_, commodity_, totalMoney_));
 					return;
 				}
 			}
-			array.push(new Order(commodity_, owner_, costPerItem_));
+			array.push(new SellOrder(owner_, commodity_, totalMoney_));
 		}
 	}
 	
-	function CheckSellOrders(commodity_:Commodity, maximumCostPerItem_:Int):Array<Order>
+	public function BuyCommodity(owner_:Agent, commodityToBuy_:Commodity, totalMoney_:Commodity):Void
 	{
-		var array:Array<Order> = sellOrders[commodity_.get_type()];
+		var amountPerItem:Int = cast(totalMoney_.get_count() / commodityToBuy_.get_count(), Int);
 		
-		var validOrders:Array<Order> = new Array<Order>();
-		var countFulfilled:Int = 0;
+		// check existing sell orders
+		var existingSellOrders:Array<SellOrder> = sellOrders[commodityToBuy_.get_type()];
 		
-		for (i in array)
+		// sell existing orders to agent
+		for (i in existingSellOrders)
 		{
-			if (i.costPerItem <= maximumCostPerItem_ && countFulfilled < commodity_.get_count())
+			// if we can get less than the amount we are looking to buy for do it.
+			if (amountPerItem >= i.GetCostPerItem())
 			{
-				validOrders.push(i);
-				countFulfilled += commodity_.get_count();
+				// complete the transaction
+				var fOrders:Array<FinishedOrder> = i.Completed(owner_, totalMoney_);
+				
+				for (i in 0...fOrders.length)
+				{
+					// since the buyer is at the brokerage, give him the goods immediately. Add the sellers money to the competedOrders awaiting collection.
+					if (fOrders[i].get_owner() == owner_)
+					{
+						// remove the amount from commodityToBuy so we dont end up attempting to buy more than wanted
+						commodityToBuy_.Remove(fOrders[i].GetSize());
+						fOrders[i].TransferGoods();
+					}
+					else
+					{
+						completedOrders.push(fOrders[i]);
+					}
+				}
+				
+				// recalculate incase amount per item increases allowing for a broader range of selling targets.
+				amountPerItem = cast(totalMoney_.get_count() / commodityToBuy_.get_count(), Int);
 			}
 			else
 			{
-				return validOrders;
+				break;
 			}
 		}
 		
-		return null;
+		if (commodityToBuy_.get_count() > 0)
+		{
+			AddBuyOrder(owner_, commodityToBuy_, totalMoney_);
+		}
 	}
 	
-	function AddBuyOrder(commodity_:Commodity, owner_:Agent, costPerItem_:Int)
+	function AddBuyOrder(owner_:Agent, commodity_:Commodity, totalMoney_:Commodity)
 	{
-		var array:Array<Order> = buyOrders[commodity_.get_type()];
+		var amountPerItem:Int = cast(totalMoney_.get_count() / commodity_.get_count(), Int);
+		
+		var array:Array<BuyOrder> = buyOrders[commodity_.get_type()];
 		
 		if (array == null)
 		{
-			array = new Array<Order>();
+			array = new Array<BuyOrder>();
 			buyOrders[commodity_.get_type()] = array;
-			array.push(new Order(commodity_, owner_, costPerItem_));
+			array.push(new BuyOrder(owner_, commodity_, totalMoney_));
 			return;
 		}
 		else
 		{
 			for (i in 0...array.length - 1)
 			{
-				if (array[i].costPerItem > costPerItem_)
+				if (array[i].GetCostPerItem() > amountPerItem)
 				{
-					array.insert(i, new Order(commodity_, owner_, costPerItem_));
+					array.insert(i, new BuyOrder(owner_, commodity_, totalMoney_));
 					return;
 				}
 			}
-			array.push(new Order(commodity_, owner_, costPerItem_));
+			array.push(new BuyOrder(owner_, commodity_, totalMoney_));
 		}
 	}
 	
-	
-	function CheckBuyOrders(commodity_:Commodity, minimumCostPerItem_:Int):Array<Order>
+	public function CheckForCompletedTransactions(owner_:Agent)
 	{
-		var array:Array<Order> = sellOrders[commodity_.get_type()];
 		
-		var validOrders:Array<Order> = new Array<Order>();
-		var countFulfilled:Int = 0;
-		
-		for (i in array)
+		for (i in 0...completedOrders.length)
 		{
-			if (i.get_costPerItem() >= minimumCostPerItem_ && countFulfilled < commodity_.get_count())
+			if (completedOrders[i].get_owner() == owner_)
 			{
-				validOrders.push(i);
-				countFulfilled += commodity_.get_count();
-			}
-			else
-			{
-				return validOrders;
+				completedOrders[i].TransferGoods();
 			}
 		}
 		
-		return null;
 	}
 	
+}
 
-
-class Order
+class BuyOrder
 {
 	
-	var money(get, null):Int;
-	
-	public function get_money():Int
+	var money(get, null):Commodity;
+	public function get_money():Commodity
 	{
 		return money;
 	}
 	
-	var commodity:Commodity;
-	public function get_commodity():Commodity
+	var commodityBeingBought(get, null):Commodity;
+	public function get_commodityBeingBought():Commodity
 	{
-		return commodity;
+		return commodityBeingBought;
 	}
 	
-	var owner:Agent;
-	
-	
-	var costPerItem(get, null):Int;
-	public function get_costPerItem():Int
+	var owner(get, null):Agent;
+	public function get_owner():Agent
 	{
-		return costPerItem;
+		return owner;
 	}
-	
-	public function new(commodity_:Commodity, owner_:Agent, costPerItem_:Int)
+
+	public function new(owner_:Agent, commodity_:Commodity, money_:Commodity)
 	{
-		commodity = commodity_;
+		commodityBeingBought = commodity_;
 		owner = owner_;
-		costPerItem = costPerItem;
+		money = money_;
 	}
 	
-	public function Ordered(count_:Int):FinishedOrder
+	public function GetCostPerItem():Int
 	{
+		return cast(money.get_count() / commodityBeingBought.get_count(), Int);
+	}
+	
+	public function Completed(seller_:Agent, commodityBeingBought_:Commodity):Array<FinishedOrder>
+	{
+		var finishedOrders:Array<FinishedOrder> = new Array<FinishedOrder>();
 		
-		var amountMoved:Int = cast(Math.min(count_, commodity.get_count()), Int);
+		// determine how much of the good is being traded
+		var amountMoved:Int = cast(Math.min(commodityBeingBought_.get_count(), commodityBeingBought.get_count()), Int);
+		var amountOfMoney:Int = amountMoved * GetCostPerItem();
 		
+		finishedOrders.push(new FinishedOrder(seller_, money.Split(amountOfMoney)));
+		finishedOrders.push(new FinishedOrder(owner, commodityBeingBought_.Split(amountMoved)));
 		
+		return finishedOrders;
+	}
+	
+}
+
+class SellOrder
+{
+	
+	var moneyBeingAskedFor(get, null):Commodity;
+	public function get_moneyBeingAskedFor():Commodity
+	{
+		return moneyBeingAskedFor;
+	}
+	
+	var commodityBeingSold(get, null):Commodity;
+	public function get_commodityBeingSold():Commodity
+	{
+		return commodityBeingSold;
+	}
+	
+	var owner(get, null):Agent;
+	public function get_owner():Agent
+	{
+		return owner;
+	}
+
+	public function new(owner_:Agent, commodity_:Commodity, money_:Commodity)
+	{
+		owner = owner_;
+		commodityBeingSold = commodity_;
+		moneyBeingAskedFor = money_;
+	}
+	
+	public function GetCostPerItem():Int
+	{
+		return cast(moneyBeingAskedFor.get_count() / commodityBeingSold.get_count(), Int);
+	}
+	
+	public function Completed(buyer_:Agent, money_:Commodity):Array<FinishedOrder>
+	{
+		var finishedOrders:Array<FinishedOrder> = new Array<FinishedOrder>();
 		
+		// determine how much of the good is being traded
+		var maxAmountOfMoneyBeingTraded:Int = cast(Math.min(money_.get_count(), moneyBeingAskedFor.get_count()), Int);
+		
+		var maxAmountOfCommodityBeingTraded:Int = cast(maxAmountOfMoneyBeingTraded / GetCostPerItem(), Int);
+		
+		// make sure that we stay within the boundaries of the sell order ie. cant sell more than we have
+		var finalAmountOfCommodityBeingTraded:Int = cast(Math.min(commodityBeingSold.get_count(), maxAmountOfCommodityBeingTraded), Int);
+		var finalAmountOfMoneyBeingTraded:Int = finalAmountOfCommodityBeingTraded * GetCostPerItem();
+		
+		finishedOrders.push(new FinishedOrder(owner, money_.Split(finalAmountOfMoneyBeingTraded)));
+		finishedOrders.push(new FinishedOrder(buyer_, commodityBeingSold.Split(finalAmountOfCommodityBeingTraded)));
+		
+		return finishedOrders;
 	}
 	
 }
@@ -191,27 +288,23 @@ class FinishedOrder
 	}
 	
 	var commodity:Commodity;
-	var money:Int;
 	
-	public function new(agent_:Agent, commodity_:Commodity, money_:Int)
+	public function new(agent_:Agent, commodity_:Commodity)
 	{
 		owner = agent_;
 		
 		commodity = commodity_;
-
-		money = money_;
+	}
+	
+	public function GetSize():Int
+	{
+		return commodity.get_count();
 	}
 	
 	public function TransferGoods():Bool
 	{
-		
-		//if(owner.get_inventory().
-		if (commodity != null)
-		{
-			owner.get_inventory().AddStock(commodity);
-		}
-		
-		owner.AddMoney(money);
+		owner.get_inventory().AddStock(commodity);
+		return true;
 	}
 	
 }

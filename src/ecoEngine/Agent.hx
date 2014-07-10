@@ -11,9 +11,7 @@ class Agent
 	
 	var id(get, null):Int;
 	var profession(get, null):AgentClass;
-	
-	var money_amount(get, null):Int;
-	
+		
 	var inventory(get, null):Inventory = new Inventory(32);
 
 	public function new(profession_:AgentClass) 
@@ -46,21 +44,6 @@ class Agent
 	public function get_profession():AgentClass
 	{
 		return profession;
-	}
-	
-	public function get_money_amount():Int
-	{
-		return money_amount;
-	}
-	
-	public function AddMoney(count_:Int):Void
-	{
-		money_amount += count_;
-	}
-	
-	public function RemoveMoney(count_:Int):Void
-	{
-		money_amount = Math.max(0, money_amount - count_);
 	}
 	
 	public function get_inventory():Inventory

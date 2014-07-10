@@ -1,5 +1,6 @@
 {
    "resources":[
+	  {"name":"Money"},
       {"name":"Wood"},
       {"name":"Food"},
       {"name":"Iron"},
@@ -9,38 +10,38 @@
       {
          "name":"Woodcutter",
          "inventory":[
+			{"name":"Money", "count":10},
             {"name":"Food", "count":5},
             {"name":"Tool", "count":5}
          ],
-         "money":10,
          "script":"Resources/ProfessionScripts/Woodcutter.hs"
       },
 	  {
          "name":"Farmer",
          "inventory":[
+			{"name":"Money", "count":10},
             {"name":"Food", "count":10},
             {"name":"Tool", "count":5}
          ],
-         "money":10,
          "script":"Resources/ProfessionScripts/Farmer.hs"
       },
 	  {
          "name":"Miner",
          "inventory":[
+			{"name":"Money", "count":10},
             {"name":"Food", "count":5},
             {"name":"Tool", "count":5}
          ],
-         "money":10,
          "script":"Resources/ProfessionScripts/Miner.hs"
       },
 	  {
          "name":"Blacksmith",
          "inventory":[
+			{"name":"Money", "count":10},
             {"name":"Food", "count":5},
             {"name":"Iron", "count":5},
             {"name":"Tool", "count":5}
          ],
-         "money":10,
          "script":"Resources/ProfessionScripts/Blacksmith.hs"
       }
    ]
